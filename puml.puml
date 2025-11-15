@@ -1,0 +1,131 @@
+@startuml
+' Class Diagram - Parking Reservation System (Unidirectional Focus)
+skinparam classAttributeIconSize 0
+left to right direction
+
+class Client {
+  + clientId: String
+  + name: String
+  + email: String
+  + balance: double
+  + book(spotId: String, start: Date, end: Date): Reservation
+  + cancelReservation(reservaId: String): void
+}
+
+class Vehicle {
+  + vehicleId: String
+  + licensePlate: String
+  + make: String
+  + model: String
+  + type: String
+}
+
+class Parking {
+  + parkingId: String
+  + name: String
+  + address: String
+  + capacity: int
+  + openHours(): String
+  + getAvailableSpots(): int
+}
+
+class Spot {
+  + spotId: String
+  + code: String
+  + level: String
+  + type: String
+  + isAvailable: boolean
+  + markOccupied(): void
+  + freeSpot(): void
+}
+
+class Reservation {
+  + reservaId: String
+  + start: Date
+  + end: Date
+  + status: String
+  + calculateDurationHoras(): int
+  + calculateCost(t: Rate): double
+}
+
+class Rate {
+  + rateId: String
+  + pricePerHour: double
+  + pricePerMinute: double
+  + overstayRatePerMinute: double
+  + description: String
+  + applyHours(h: int): double
+}
+
+class Payment {
+  + paymentId: String
+  + date: Date
+  + amount: double
+  + method: String
+  + process(): boolean
+}
+
+class TimeSlot {
+  + slotId: String
+  + dayOfWeek: String
+  + startTime: Time
+  + endTime: Time
+}
+
+class VehicleType {
+  + typeId: String
+  + name: String
+  + minSize: double
+  + maxSize: double
+}
+
+class SpotType {
+  + spotTypeId: String
+  + name: String
+  + minDimensions: double
+}
+
+class CompatibilityRule {
+  + ruleId: String
+  + isCompatible: bool
+}
+
+class Penalty {
+  + penaltyId: String
+  + reason: String
+  + delayMinutes: int
+  + penaltyAmount: double
+  + isPaid: boolean
+  + calculateFee(delay: int, rate: Rate): double
+}
+
+' Relaciones Unidireccionales
+' Composición: Parking contiene Spots
+Parking "1" *-- "*" Spot : has
+
+' Configuración de Parking
+Parking "1" o-- "*" TimeSlot : schedules
+
+' Relaciones del Cliente y Vehículo
+Client "1" o-- "*" Vehicle : owns
+Client "1" --> "*" Reservation : makes
+
+' Relaciones de Tipos y Reglas (para validación)
+Vehicle "*" --> "1" VehicleType : isOfType
+Spot "*" --> "1" SpotType : isOfType
+CompatibilityRule "1" --> "1" VehicleType : validates
+CompatibilityRule "1" --> "1" SpotType : against
+
+' Tarifas
+Rate "1" --> "*" Parking : appliesTo
+Rate "1" --> "*" TimeSlot : validFor
+
+' Flujo Transaccional (Reservation es el centro)
+Reservation "1" --> "1" Spot : books
+Reservation "1" o-- "0..1" Vehicle : withVehicle
+Reservation "1" o-- "0..1" Payment : requires
+Reservation "1" o-- "0..1" Penalty : generates
+
+' Pago de la Multa
+Penalty "1" o-- "0..1" Payment : settledBy
+@enduml

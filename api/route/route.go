@@ -17,4 +17,6 @@ func Setup(env *bootstrap.Env, timeout time.Duration, gin *gin.Engine) {
 	//Todas las API Privadas
 	NewPedidoRouter(env, timeout, publicRouter)
 	NewEstadoPedidoRouter(env, timeout, publicRouter)
+	NewProductoRouter(env, timeout, publicRouter)
+	NewPagoRouter(env, timeout, publicRouter)
 }
