@@ -17,4 +17,6 @@ func Setup(env *bootstrap.Env, timeout time.Duration, gin *gin.Engine) {
 	//Todas las API Privadas
 	NewReservationRouter(env, timeout, publicRouter)
 	NewClientRouter(env, timeout, publicRouter)
+	NewVehicleRouter(env, timeout, publicRouter)
+	NewParkingRouter(env, timeout, publicRouter)
 }
