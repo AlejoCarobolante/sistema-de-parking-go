@@ -15,5 +15,6 @@ func Setup(env *bootstrap.Env, timeout time.Duration, gin *gin.Engine) {
 	//protectedRouter := gin.Group("/api")
 
 	//Todas las API Privadas
+	NewReservationRouter(env, timeout, publicRouter)
 	NewClientRoute(env, timeout, publicRouter)
 }
